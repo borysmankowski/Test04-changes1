@@ -23,11 +23,14 @@ public class Lekarze {
         this.dataUrodzenia = dataUrodzenia;
         this.nip = nip;
         this.pesel = pesel;
-        this.listaWizytLekarze = listaWizytLekarze;
     }
 
-    public void addWizytaLekarz(Wizyty wizyta) {
-        listaWizytLekarze.add(wizyta);
+    public void addWizytaLekarz (Wizyty wizyta) {
+        if (listaWizytLekarze == null) {
+            listaWizytLekarze = new ArrayList<>();
+        } else {
+            listaWizytLekarze.add(wizyta);
+        }
     }
 
     public int getIdLekarza() {

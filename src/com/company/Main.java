@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args) {
 
 
-        List<Lekarze> lekarze = new ArrayList<>();
+        List<Lekarze> lekarzeList = new ArrayList<>();
 
         try {
             File fileLekarze = new File("src/com/company/pliki/lekarze (1).txt");
@@ -21,7 +21,7 @@ public class Main {
             readerLekarze.nextLine();
             while (readerLekarze.hasNextLine()) {
                 String[] data = readerLekarze.nextLine().trim().split("\t+");
-                lekarze.add(new Lekarze(Integer.parseInt(data[0]), data[1], data[2], data[3], new SimpleDateFormat("yyyy-MM-dd").parse(data[4]), data[5], data[6]));
+                lekarzeList.add(new Lekarze(Integer.parseInt(data[0]), data[1], data[2], data[3], new SimpleDateFormat("yyyy-MM-dd").parse(data[4]), data[5], data[6]));
             }
             readerLekarze.close();
 
@@ -33,7 +33,7 @@ public class Main {
         }
 
 
-        List<Pacjenci> pacjent = new ArrayList<>();
+        List<Pacjenci> pacjenciList = new ArrayList<>();
 
         try {
             File pacjenciFile = new File("src/com/company/pliki/pacjenci.txt");
@@ -41,7 +41,7 @@ public class Main {
             readerPacjenci.nextLine();
             while (readerPacjenci.hasNextLine()) {
                 String[] data = readerPacjenci.nextLine().trim().split("\t");
-                pacjent.add(new Pacjenci(Integer.parseInt(data[0]), data[1], data[2], data[3], new SimpleDateFormat("yyyy-MM-dd").parse(data[4])));
+                pacjenciList.add(new Pacjenci(Integer.parseInt(data[0]), data[1], data[2], data[3], new SimpleDateFormat("yyyy-MM-dd").parse(data[4])));
             }
             readerPacjenci.close();
 
@@ -63,17 +63,20 @@ public class Main {
             while (readerWizyty.hasNextLine()) {
                 String[] data = readerWizyty.nextLine().trim().split("\t");
 
-                Lekarze lekarze1 = lekarze.stream()
-                        .filter(m -> m.getIdLekarza() == Integer.parseInt(data[0]))
-                        .findAny()
-                        .orElse(null);
+                Optional<Lekarze> lekarze = lekarzeList.stream()
+                        .filter(l -> l.getIdLekarza() == Integer.parseInt(data[0]))
+                        .findFirst();
 
-                Pacjenci pacjenci1 = pacjent.stream()
-                        .filter(m -> m.getIdPacjenta() == Integer.parseInt(data[1]))
-                        .findAny()
-                        .orElse(null);
+                Optional<Pacjenci> pacjenci = pacjenciList.stream()
+                        .filter(l -> l.getIdPacjenta() == Integer.parseInt(data[1]))
+                        .findFirst();
 
-                Wizyty wizyta = new Wizyty(lekarze1, pacjenci1, new SimpleDateFormat("yyyy-MM-dd").parse(data[2]));
+
+                Wizyty wizyta = new Wizyty(lekarze.get(), pacjenci.get(), new SimpleDateFormat("yyyy-MM-dd").parse(data[2]));
+
+                lekarze.get().addWizytaLekarz(wizyta);
+
+                pacjenci.get().addWizytaPacjenci(wizyta);
 
                 wizytyList.add(wizyta);
             }
@@ -85,26 +88,26 @@ public class Main {
             e.printStackTrace();
         }
 
-        zadanie1(wizytyList);
+        zadanie1(lekarzeList);
         System.out.println();
-        zadanie2(wizytyList);
+        zadanie2(pacjenciList);
         System.out.println();
         zadanie3(wizytyList);
         System.out.println();
         zadanie4(wizytyList);
         System.out.println();
-        zadanie5(lekarze);
+        zadanie5(lekarzeList);
         System.out.println();
         zadanie6(wizytyList);
         System.out.println();
         zadanie7(wizytyList);
 
+
     }
 
-    private static void zadanie1(List<Wizyty> wizyty) {
+    private static void zadanie1(List<Lekarze> lekarze) {
         System.out.println("Zadanie1");
-        wizyty.stream()
-                .map(Wizyty::getLekarze)
+        lekarze.stream()
                 .collect(Collectors.groupingBy(s -> s, Collectors.counting()))
                 .entrySet()
                 .stream()
@@ -112,10 +115,9 @@ public class Main {
                 .ifPresent(System.out::println);
     }
 
-    private static void zadanie2(List<Wizyty> wizyty) {
+    private static void zadanie2(List<Pacjenci> pacjenci) {
         System.out.println("Zadanie2");
-        wizyty.stream()
-                .map(Wizyty::getPacjenci)
+        pacjenci.stream()
                 .collect(Collectors.groupingBy(s -> s, Collectors.counting()))
                 .entrySet()
                 .stream()

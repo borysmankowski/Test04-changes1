@@ -1,4 +1,5 @@
 package com.company;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +21,11 @@ public class Pacjenci {
     }
 
     public void addWizytaPacjenci(Wizyty wizyta) {
-        listaWizytPacjenci.add(wizyta);
+        if (listaWizytPacjenci == null) {
+            listaWizytPacjenci = new ArrayList<>();
+        } else {
+            listaWizytPacjenci.add(wizyta);
+        }
     }
 
     public void setIdPacjenta(int idPacjenta) {
